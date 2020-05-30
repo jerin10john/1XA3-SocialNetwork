@@ -2,8 +2,29 @@
    | Handle Submitting Posts - called by $('#post-button').click(submitPost)
    ********************************************************************************************
    */
-function submitPost(event) {
-    alert('Post Button Pressed');
+
+  function submitPostResponse(data,status) {
+    if (status == 'success') {
+        // reload page to update like count
+        location.reload();
+    }
+    else {
+        alert('failed to create friend request ' + status);
+    }
+}
+
+   function submitPost(event) {
+
+     let postContent = $('#post-text').text();
+     let json_data = { 'postContent' : postContent };
+     // globally defined in messages.djhtml using i{% url 'social:like_view' %}
+     let url_path = post_submit_url;
+ 
+     // AJAX post
+     $.post(url_path,
+            json_data,
+            submitPostResponse);
+
     // TODO Objective 8: send contents of post-text via AJAX Post to post_submit_view (reload page upon success)
 }
 
@@ -11,8 +32,27 @@ function submitPost(event) {
    | Handle Liking Posts - called by $('.like-button').click(submitLike)
    ********************************************************************************************
    */
-function submitLike(event) {
-    alert('Like Button Pressed');
+  function likeResponse(data,status) {
+    if (status == 'success') {
+        // reload page to update like count
+        location.reload();
+    }
+    else {
+        alert('failed to create friend request ' + status);
+    }
+}
+
+   function submitLike(event) {
+    let postID = this.id;
+    let json_data = { 'postID' : postID };
+    // globally defined in messages.djhtml using i{% url 'social:like_view' %}
+    let url_path = like_post_url;
+    console.log("blah")
+
+    // AJAX post
+    $.post(url_path,
+           json_data,
+           likeResponse);
     // TODO Objective 10: send post-n id via AJAX POST to like_view (reload page upon success)
 }
 
