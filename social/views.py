@@ -271,13 +271,21 @@ def accept_decline_view(request):
     '''
     data = request.POST.get('decision')
     if data is not None:
-        # TODO Objective 6: parse decision from data
+        ans = data[:2]
+        username = data[2:]
 
         if request.user.is_authenticated:
-
-            # TODO Objective 6: delete FriendRequest entry and update friends in both Users
-
-            # return status='success'
+            user_info = models.UserInfo.objects.get(user=request.user)  
+            user_fr = models.UserInfo.objects.get(user=username) 
+            instance = models.FriendRequest.objects.filter(to_user=user_info, from_user=user_fr)
+            if ans[:2] == "A-":                                                                             
+                user_info.friends.add(user_fr)
+                user_fr.friends.add(user_info)  
+                instance.delete()   
+            else:  
+                instance.delete()
+                
+                # return status='success'
             return HttpResponse()
         else:
             return redirect('login:login_view')
