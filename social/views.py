@@ -48,15 +48,38 @@ def account_view(request):
     """
     if request.user.is_authenticated:
         form = None
+        user_info = models.UserInfo.objects.get(user=request.user) 
+        if request.method == 'POST':
+            if 'mainForm' in request.POST:
+                form = PasswordChangeForm(request.user, request.POST)
+                if form.is_valid():
+                    user_info = form.save()
+                    update_session_auth_hash(request, user_info)
+                    return redirect('login:login_view')
 
-        # TODO Objective 3: Create Forms and Handle POST to Update UserInfo / Password
+            if 'formChange' in request.POST:
+                employ = request.POST.get('emp', None)
+                user_info.employment = employ
 
-        user_info = models.UserInfo.objects.get(user=request.user)
-        context = { 'user_info' : user_info,
-                    'form' : form }
-        return render(request,'account.djhtml',context)
+                locate = request.POST.get('loc', None)
+                user_info.location = locate
 
-    request.session['failed'] = True
+                birth = request.POST.get('bir', None)
+                user_info.birthday = birth
+
+                inter = request.POST.get('intr', None)
+                user_info.interests.add(inter)
+                return redirect('social:account_view')
+
+        else:
+            form = PasswordChangeForm(request.user)
+
+
+        context = {'user_info' : user_info,
+                    'change_form' : form }
+        return render(request, 'account.djhtml',context)
+
+    
     return redirect('login:login_view')
 
 def people_view(request):
