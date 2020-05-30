@@ -3,5 +3,12 @@
 {% block title %}Signup Page{% endblock %}
 
 {% block middle_column %}
-    <!-- TODO Objective 1: implement signup form -->
+    <form class="modal-content animate" method="post" action="{% url 'login:create_user_view' %}">
+        {% csrf_token %}
+        {{ signup_form }}
+        <input type="submit" value="Submit" />
+    </form>
+    {% if signup_failed %}
+        <p style="color:red"> Unable to Create Account </p>
+    {% endif %}
 {% endblock %}
