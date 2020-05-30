@@ -167,8 +167,8 @@ def post_submit_view(request):
     postContent = request.POST.get('postContent')
     if postContent is not None:
         if request.user.is_authenticated:
-
-            # TODO Objective 8: Add a new entry to the Post model
+            user_info = models.UserInfo.objects.get(user=request.user)
+            postr = models.Post.objects.create(owner=user_info, content=postContent)
 
             # return status='success'
             return HttpResponse()
@@ -191,9 +191,12 @@ def more_post_view(request):
         # update the # of posts dispalyed
 
         # TODO Objective 9: update how many posts are displayed/returned by messages_view
+        # update the # of people dispalyed
+        j = request.session.get('count',1)
+        request.session['count'] = j+1
 
         # return status='success'
-        return HttpResponse()
+        return HttpResponse(j)
 
     return redirect('login:login_view')
 
