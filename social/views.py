@@ -84,6 +84,7 @@ def account_view(request):
     
     return redirect('login:login_view')
 
+
 def people_view(request):
     """Private Page Only an Authorized User Can View, renders people page
        Displays all users who are not friends of the current user and friend requests
@@ -139,11 +140,13 @@ def like_view(request):
     postIDReq = request.POST.get('postID')
     if postIDReq is not None:
         # remove 'post-' from postID and convert to int
-        # TODO Objective 10: parse post id from postIDReq
-        postID = 0
+        postID = int(postIDReq[5:])
 
         if request.user.is_authenticated:
             # TODO Objective 10: update Post model entry to add user to likes field
+            post = models.Post.objects.get(id=postID)
+            user_info = models.UserInfo.objects.get(user=request.user)
+            post.likes.add(user_info)
 
             # return status='success'
             return HttpResponse()
