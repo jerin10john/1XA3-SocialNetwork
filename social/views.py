@@ -94,15 +94,24 @@ def people_view(request):
     """
     if request.user.is_authenticated:
         user_info = models.UserInfo.objects.get(user=request.user)
-        # TODO Objective 4: create a list of all users who aren't friends to the current user (and limit size)
-        all_people = []
+        user_friends = user_info.friends.all()
+        all_people = list(models.UserInfo.objects.all())
+        not_myself = all_people.remove(user_info)
+        only_strangers = [x for x in all_people if x not in user_friends]
+        only_strangers = only_strangers[:(request.session.get('counter',1))]
+
 
         # TODO Objective 5: create a list of all friend requests to current user
-        friend_requests = []
+        friend_requests = list(models.FriendRequest.objects.all())
+        frcount = True
 
         context = { 'user_info' : user_info,
                     'all_people' : all_people,
-                    'friend_requests' : friend_requests }
+                    'user_friends' : user_friends,
+                    'only_strangers' : only_strangers,
+                    'friend_requests' : friend_requests,
+                    'frcount' : frcount}
+
 
         return render(request,'people.djhtml',context)
 
@@ -198,11 +207,11 @@ def more_ppl_view(request):
     '''
     if request.user.is_authenticated:
         # update the # of people dispalyed
-
-        # TODO Objective 4: increment session variable for keeping track of num ppl displayed
+        i = request.session.get('counter',1)
+        request.session['counter'] = i+1
 
         # return status='success'
-        return HttpResponse()
+        return HttpResponse(i)
 
     return redirect('login:login_view')
 

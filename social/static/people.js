@@ -2,7 +2,7 @@
    | Handle Submiting Friend Requests - called by $('.like-button').click(submitLike)
    ********************************************************************************************
    */
-function frResponse(data,status) {
+  function frResponse(data,status) {
     if (status == 'success') {
         // reload page to update like count
         location.reload();
@@ -57,9 +57,26 @@ function submitMorePpl(event) {
    ********************************************************************************************
    */
 
+function acceptDeclineResponse(data,status) {
+    if (status == 'success') {
+        // reload page to update like count
+        location.reload();
+    }
+    else {
+        alert('failed to create friend request ' + status);
+    }
+}
+
 function acceptDeclineRequest(event) {
     // TODO Objective 6: perform AJAX POST to accept or decline Friend Request
-    alert('Accept/Decline Button Pressed');
+    let decision = this.id;
+    let json_data = { 'decision' : decision };
+    let url_path = accept_decline_url;
+    console.log("blah")
+
+    $.post(url_path,
+        json_data,
+        acceptDeclineResponse);
 }
 
 /* ********************************************************************************************
