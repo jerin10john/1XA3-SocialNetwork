@@ -49,8 +49,6 @@ This Social Network Website was made and designed for a project in the COMPSCI 1
 - The page shows two sections. The upper sections, allows the user to update their passowrd, and the lower section allows the user to update their user information. 
 - The upper section user a ***PasswordChangeForm*** imported from ***django.contrib.auth.forms*** 
 - It accepts user input and updates the the password field from the UserInfo object, If the user meets the specified criteria stated by the form. 
-### Exceptions:
-- The update user form, isn't working. Adding it or trying to use it raises a conflict with the password change form. There are manuale tags present insed the ***account.djhtml*** file. But these do not update the fields.
 
 
 ## Objective 4: Displaying People List
@@ -141,5 +139,5 @@ This Social Network Website was made and designed for a project in the COMPSCI 1
 ## Exceptions
 - All users have already liked a few of the posts, so the like button might not work on a few posts since it is already liked. 
 - TestUser2 is the only test user who hasn't made any friends and hasn't made or liked any posts 
-- All the fields of the user are unspecified, as the second half of objective 3 (adding user fields) is not functional. 
+
 
