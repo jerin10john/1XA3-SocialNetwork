@@ -49,40 +49,53 @@ def account_view(request):
                         (if handled in this view)
     """
     if request.user.is_authenticated:
-        form = None
-        user_info = models.UserInfo.objects.get(user=request.user) 
-        if request.method == 'POST':
-            if 'mainForm' in request.POST:
-                form = PasswordChangeForm(request.user, request.POST)
-                if form.is_valid():
-                    user_info = form.save()
-                    update_session_auth_hash(request, user_info)
-                    return redirect('login:login_view')
+        pass_change_form = PasswordChangeForm(request)
 
-            if 'formChange' in request.POST:
-                employ = request.POST.get('emp', None)
-                user_info.employment = employ
+        # TODO Objective 3: Create Forms and Handle POST to Update UserInfo / Password
 
-                locate = request.POST.get('loc', None)
-                user_info.location = locate
-
-                birth = request.POST.get('bir', None)
-                user_info.birthday = birth
-
-                inter = request.POST.get('intr', None)
-                user_info.interests.add(inter)
-                return redirect('social:account_view')
-
+        user_info = models.UserInfo.objects.get(user=request.user)
+        interest_list = list(user_info.interests.all())
+        if len(interest_list) == 0:
+            interest_list = [1,2,3,4,5]
+        if user_info.birthday is not None:
+            render_birthday = dt.datetime.strftime(user_info.birthday, "%Y-%m-%d")
         else:
-            form = PasswordChangeForm(request.user)
+            render_birthday = "0001-01-01"
+        context = {'user_info': user_info,
+                   'pass_change_form': pass_change_form,
+                   'fields': ["Employment", "Location", "Birthday", "Interests"],
+                   'render_birthday': render_birthday,
+                   'interest_list': interest_list}
+        return render(request, 'account.djhtml', context)
 
-
-        context = {'user_info' : user_info,
-                    'change_form' : form }
-        return render(request, 'account.djhtml',context)
-
-    
+    request.session['failed'] = True
     return redirect('login:login_view')
+
+def info_update_view(request):
+    user_info = models.UserInfo.objects.get(user=request.user)
+    if request.method == 'POST':
+        employment = request.POST.get('Employment', 'Unspecified')
+        location = request.POST.get('Location', 'Unspecified')
+        birthday = request.POST.get('Birthday', '0001-01-01')
+        interest = request.POST.get('Interests', models.Interest('No Interest'))
+
+        if type(interest) == str and interest != '':
+            interest = models.Interest(label=f"{interest}")
+            interest.save(using='default')
+            user_info.interests.add(interest)
+
+        if birthday == '':
+            birthday = '0001-01-01'
+
+        if type(birthday) == str and birthday != '0001-01-01':
+            birthday = dt.datetime.strptime(birthday,'%Y-%m-%d')
+            birthday = birthday.date().strftime('%Y-%m-%d')
+            user_info.birthday = birthday
+
+        user_info.employment = employment
+        user_info.location = location
+        user_info.save(using='default')
+    return redirect('social:account_view')
 
 
 def people_view(request):

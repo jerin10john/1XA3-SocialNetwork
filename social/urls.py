@@ -20,6 +20,7 @@ app_name = 'social'
 urlpatterns = [
     path('messages/', views.messages_view,name='messages_view'),
     path('account/', views.account_view,name='account_view'),
+    path('update_info/', views.info_update_view, name='info_update_view'),
     path('people/', views.people_view,name='people_view'),
     path('like/', views.like_view,name='like_view'),
     path('postsubmit/', views.post_submit_view,name='post_submit_view'),

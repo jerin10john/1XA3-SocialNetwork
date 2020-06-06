@@ -81,3 +81,18 @@ def create_user_view(request):
   
   request.session['signup_failed'] = True 
   return redirect('login:signup_view')
+
+def password_change_view(request):
+    if not request.user.is_authenticated:
+        redirect('login:login_view')
+
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            return redirect('login:login_view')
+    else:
+        form = PasswordChangeForm(request.user)
+    context = {'user': request.user, 'change_form': form}
+    return render(request, 'login.djhtml', context)
